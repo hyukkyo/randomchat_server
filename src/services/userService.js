@@ -1,15 +1,13 @@
-const { findUserById } = require('../repositories/userRepository');
+const { findUserById } = require("../repositories/userRepository");
 
-async function getUserInfo(req, res) {
-    try {
-        const userInfo = await findUserById(req.user.userId);
-        res.status(200).json({ 
-            message: 'User found',
-            userInfo
-        });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
+async function getUserInfo(userId) {
+  try {
+    const userInfo = await findUserById(userId);
+    if (!userInfo) throw new Error("User not found");
+    return { email: userInfo.email, name: userInfo.name };
+  } catch (error) {
+    throw error;
+  }
 }
 
-module.exports = { getUserInfo }
+module.exports = { getUserInfo };

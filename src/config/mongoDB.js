@@ -6,10 +6,7 @@ const mongoURI = `mongodb://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB
 
 const mongoDB = async () => {
     try {
-        await mongoose.connect(mongoURI, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-        });
+        await mongoose.connect(mongoURI);
         console.log('MongoDB connected...');
     } catch (err) {
         console.error('Error connecting to MongoDB', err);

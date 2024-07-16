@@ -1,4 +1,4 @@
-const { registerUser, loginUser, accessToken } = require('../services/authService');
+const { registerUser, loginUser, refreshTokens } = require('../services/authService');
 
 async function signup(req, res) {
     const { email, password, name } = req.body;
@@ -25,17 +25,17 @@ async function login(req, res) {
     }
 }
 
-async function access(req, res) {
+async function refresh(req, res) {
     const { refreshToken } = req.body;
     try {
-        const tokens = await accessToken(refreshToken);
+        const newTokens = await refreshTokens(refreshToken);
         res.status(200).json({ 
             message: 'Tokens refreshed',
-            tokens
+            newTokens
         });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 }
 
-module.exports = { signup, login, access };
+module.exports = { signup, login, refresh };

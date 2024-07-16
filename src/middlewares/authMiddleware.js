@@ -1,14 +1,16 @@
-const { verifyToken } = require('../utils/jwt');
+const { verifyAccessToken } = require("../utils/jwt");
 
 function authenticateToken(req, res, next) {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
-    if (!token) return res.sendStatus(401);
-    verifyToken(token, (err, user) => {
-        if (err) return res.sendStatus(403);
-        req.user = user;
-        next();
-    });
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1]; // Bearer Token
+  if (!token) return res.status(403).json({ message: "No token provided" });
+
+  verifyAccessToken(token, (err, decoded) => {
+    if (err)
+      return res.status(500).json({ message: "Failed to authenticate token" });
+    req.userId = decoded.id;
+    next();
+  });
 }
 
 module.exports = authenticateToken;
