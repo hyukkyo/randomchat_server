@@ -3,7 +3,11 @@ const {
   createUser,
   findUserByEmail,
 } = require("../repositories/userRepository");
-const { createAccessToken, createRefreshToken } = require("../utils/jwt");
+const {
+  createAccessToken,
+  createRefreshToken,
+  verifyRefreshToken,
+} = require("../utils/jwt");
 const {
   saveRefreshToken,
   findRefreshToken,
@@ -47,9 +51,9 @@ async function loginUser(email, password) {
   }
 }
 
-async function refreshTokens(refreshToken) {
+async function refreshNewTokens(refreshToken) {
   try {
-    const decoded = jwt.verifyRefreshToken(refreshToken);
+    const decoded = verifyRefreshToken(refreshToken);
     const userId = decoded.id;
 
     const savedRefreshToken = await findRefreshToken(userId);
@@ -67,4 +71,4 @@ async function refreshTokens(refreshToken) {
   }
 }
 
-module.exports = { registerUser, loginUser, refreshTokens };
+module.exports = { registerUser, loginUser, refreshNewTokens };
