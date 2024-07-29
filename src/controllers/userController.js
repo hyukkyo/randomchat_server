@@ -1,16 +1,16 @@
-const { getUserInfo } = require("../services/userService");
+const { userInfo } = require("../services/userService");
 
-async function userInfo(req, res) {
+async function getMyInfo(req, res) {
   const userId = req.userId;
   try {
-    const userInfo = await getUserInfo(userId);
+    const user = await userInfo(userId);
     res.status(200).json({
       message: "User found",
-      userInfo,
+      user,
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 }
 
-module.exports = { userInfo };
+module.exports = { getMyInfo };

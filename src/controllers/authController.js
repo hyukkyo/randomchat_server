@@ -4,7 +4,7 @@ const {
   refreshNewTokens,
 } = require("../services/authService");
 
-async function signup(req, res) {
+async function postSignup(req, res) {
   const { email, password, name } = req.body;
   try {
     const user = await registerUser(email, password, name);
@@ -16,7 +16,7 @@ async function signup(req, res) {
   }
 }
 
-async function login(req, res) {
+async function postLogin(req, res) {
   const { email, password } = req.body;
   try {
     const tokens = await loginUser(email, password);
@@ -29,7 +29,7 @@ async function login(req, res) {
   }
 }
 
-async function refresh(req, res) {
+async function postRefresh(req, res) {
   const { refreshToken } = req.body;
 
   if (!refreshToken) {
@@ -47,4 +47,4 @@ async function refresh(req, res) {
   }
 }
 
-module.exports = { signup, login, refresh };
+module.exports = { postSignup, postLogin, postRefresh };
