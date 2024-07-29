@@ -24,9 +24,8 @@ mongoDB();
 
 // 라우트 설정
 app.use("/api", apiRoutes);
-app.use("/", authRoutes);
+app.use("/auth", authRoutes);
 
 app.listen(process.env.PORT, () => {
   console.log(`Server is running on port ${process.env.PORT}`);
 });
-
