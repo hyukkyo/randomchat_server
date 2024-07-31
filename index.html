@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Socket.io Chat Test</title>
+    <script src="/socket.io/socket.io.js"></script>
+  </head>
+  <body>
+    <h1>Socket.io Chat Test</h1>
+
+    <div id="room-creation">
+      <button id="createRoom">Create Room</button>
+      <p>Room ID: <span id="roomId"></span></p>
+    </div>
+
+    <div id="room-joining">
+      <input type="text" id="joinRoomId" placeholder="Room ID" />
+      <button id="joinRoom">Join Room</button>
+    </div>
+
+    <div id="chat" style="display: none">
+      <input type="text" id="message" placeholder="Message" />
+      <button id="sendMessage">Send Message</button>
+      <ul id="messages"></ul>
+    </div>
+
+    <script>
+      const token =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2YTdmYzkwNmRkMDZiZWY4ODgwMjcxMiIsImlhdCI6MTcyMjM0NDk4NSwiZXhwIjoxNzIyMzQ1ODg1fQ.D1wVvNYbY0_R8FavA3sLCSGHjacl9O3X7BggdUCVXlY"; // 서버에서 받은 JWT 토큰을 여기에 입력하세요
+      const socket = io("http://localhost:3000", {
+        query: {
+          token: token,
+        },
+      });
+
+      document.getElementById("createRoom").onclick = async () => {
+        const response = await fetch("http://localhost:3000/api/room", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const data = await response.json();
+        document.getElementById("roomId").innerText = data.code;
+
+        // Socket.io join room
+        socket.emit("joinRoom", { code: data.code });
+
+        // Display chat UI
+        document.getElementById("room-creation").style.display = "none";
+        document.getElementById("room-joining").style.display = "none";
+        document.getElementById("chat").style.display = "block";
+      };
+
+      document.getElementById("joinRoom").onclick = async () => {
+        const roomId = document.getElementById("joinRoomId").value;
+        const response = await fetch(
+          `http://localhost:3000/api/room/${roomId}`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const data = await response.json();
+        if (response.ok) {
+          // Socket.io join room
+          socket.emit("joinRoom", { code: roomId });
+
+          // Display chat UI
+          document.getElementById("room-creation").style.display = "none";
+          document.getElementById("room-joining").style.display = "none";
+          document.getElementById("chat").style.display = "block";
+        } else {
+          alert(data.message);
+        }
+      };
+
+      document.getElementById("sendMessage").onclick = () => {
+        const roomId = document.getElementById("joinRoomId").value;
+        const message = document.getElementById("message").value;
+        socket.emit("sendMessage", { code: roomId, message: message });
+      };
+
+      socket.on("message", (data) => {
+        const messages = document.getElementById("messages");
+        const messageItem = document.createElement("li");
+        messageItem.textContent = `${data.user}: ${data.text}`;
+        messages.appendChild(messageItem);
+      });
+    </script>
+  </body>
+</html>

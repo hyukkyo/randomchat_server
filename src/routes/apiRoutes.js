@@ -6,6 +6,7 @@ const {
   getAllPosts,
   getThisPost,
 } = require("../controllers/postController");
+const { postNewRoom, getRoom } = require("../controllers/roomController");
 const authenticateToken = require("../middlewares/authMiddleware");
 
 const router = express.Router();
@@ -21,5 +22,8 @@ router.get("/posts", getAllPosts); // 전체 게시글 가져오기
 router.get("/posts/:postId", getThisPost); // 게시글 조회
 // router.put("/posts/:postId", authenticateToken, putMyPost); // 내 게시글 수정
 // router.delete("/posts/:postId", authenticateToken, deleteMyPost); // 내 게시글 삭제
+
+router.post("/room", authenticateToken, postNewRoom); // 방 생성
+router.get("/room/:roomId", authenticateToken, getRoom); // 방 조회
 
 module.exports = router;
